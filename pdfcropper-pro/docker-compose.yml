@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      - MAX_UPLOAD_MB=25
+      - UPLOAD_TTL_SECONDS=1800
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    environment:
+      - NEXT_PUBLIC_API_BASE=/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
